@@ -1,73 +1,43 @@
-# AI Engineering Take-Home: Autonomous Research Agent
+# Research Agent (ReAct)
 
-A minimal, framework-free AI agent built to demonstrate autonomous task execution through a custom **ReAct (Reason + Act)** loop.
+A simple, standalone research agent I built from scratch to handle multi-step tasks. I wanted to see if I could build a working agent loop without getting bogged down by massive frameworks like LangChain.
 
-## 1. Project Overview
-This agent breaks down high-level goals into multi-step tasks. It is designed for maximum **observability** and **state control** by avoiding heavy agent frameworks (like LangChain or LangGraph), relying instead on standard Python and the OpenAI SDK.
+## 1. How it works
 
-## 2. Technical Stack
-- **Language:** Python 3.x
-- **Core Library:** `openai` (for LLM interaction)
-- **Environment Management:** `python-dotenv` (for secure credential handling)
-- **Dependencies:** Defined in `requirements.txt`
+The agent runs on a straightforward "ReAct" loop. It doesn't use complex state machines; it just follows a simple cycle:
 
-## 3. How It Works
-The agent utilizes a stateful loop that processes tasks in three distinct phases:
+**Thought:** The LLM analyzes the goal and decides the next step.
 
-1. **Thought:** The LLM analyzes the current goal and determines the next step.
-2. **Action:** The agent calls a tool (e.g., `search_web`, `read_file`) based on its thought process.
-3. **Observation:** The tool output is fed back into the conversation history, allowing the agent to adapt its strategy if errors occur.
+**Action:** It calls a specific tool (like search_web or read_file) based on that thought.
 
-## 4. Evaluation Harness
-I implemented an evaluation script (`evaluator.py`) to validate agent performance. It tests the agent against a set of predefined prompts, measuring its ability to:
-- Successfully call tools to retrieve data.
-- Adhere to the `Final Answer` format.
+**Observation:** The tool output is fed back into the agent's history, and the loop continues until the agent hits a "Final Answer."
 
-## 5. Setup & Execution
-### Prerequisites
-Ensure you have Python installed, then install the required dependencies:
-```bash
-pip install -r requirements.txt
-```
+I limited the loop to 5 steps to keep the agent from getting stuck in infinite loops or running up API costs.
 
-### Configuration
+## 2. Key decisions I made
 
-Create a file named .env in the root directory.
+**No Frameworks:** I purposefully avoided heavy frameworks. Most of them hide too much "magic" under the hood. By writing the loop myself, I could see exactly what the agent was doing at every step, which made debugging much easier.
 
-Add your API key:
+**CLI-first:** I stuck with a Command Line Interface instead of a UI. A CLI is perfect for seeing the "Thought → Action → Observation" trace in real-time without the overhead of building a frontend.
 
-Code snippet
-OPENAI_API_KEY=your_openai_api_key_here
-Running the Agent
-To run the full evaluation suite:
+**Resilient Error Handling:** If a tool fails, the error message is fed back to the agent as an observation. This allows the agent to "see" its mistake and try a different approach, rather than just crashing.
 
-Bash
-python evaluator.py
-To run a single task:
+## 3. Setup
 
-Bash
-python run.py
+`pip install -r requirements.txt`
 
-## 6. Engineering Decisions & Trade-offs
-Custom Harness vs. Frameworks: By building the loop manually, I maintained full control over the agent's context window and state management, providing better transparency.
+1. Create a `.env` file in the root directory with your OPENAI_API_KEY.
 
-CLI Interaction: A command-line interface was chosen to provide real-time, sequential tracing of the agent's "Thought," "Action," and "Observation" cycles.
+2. To run the tests: `python evaluator.py`
 
-Time Allocation: - Architecture & Loop Logic: 2 hours
+3. To run a single task: `python run.py`
 
-Tool Development & Prompting: 1.5 hours
+## 4. Deliverables Checklist
 
-Evaluation Harness & Testing: 1 hour
+1. [x] Source Code: Clear project structure.
 
-Documentation & Final Polish: 1 hour
+2. [x] Evaluation Harness: `evaluator.py` included.
 
-## 7. Deliverables Checklist
-**Source Code: Public Git repository structure.**
+3. [x] README: This file.
 
-**README: This file.**
-
-**Evaluation Harness: evaluator.py included.**
-
-**Example Run: Demo included in run.py.**
-
-**Build Session Logs: Provided in build_sessions/.**
+4. [x] Build Session Logs: Provided in `build_sessions/.`
