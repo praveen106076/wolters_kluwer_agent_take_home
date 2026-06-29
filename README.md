@@ -1,49 +1,80 @@
-Research Agent (ReAct)
-A minimal, autonomous research agent built from scratch to solve multi-step tasks. This project demonstrates core AI engineering principles—state management, prompt engineering, and observability—without relying on heavy agent frameworks.
+AI Engineering Take-Home: Autonomous Research Agent
+A minimal, framework-free AI agent built to demonstrate autonomous task execution through a custom ReAct (Reason + Act) loop.
 
-1. Approach
-Architecture: Implements a stateful while loop that forces the LLM to follow the Thought → Action → Observation pattern.
+1. Project Overview
+This agent breaks down high-level goals into multi-step tasks. It is designed for maximum observability and state control by avoiding heavy agent frameworks (like LangChain or LangGraph), relying instead on standard Python and the OpenAI SDK.
 
-Observability: Every step of the reasoning process (Thought, Action, Observation) is printed to the terminal, allowing for real-time debugging and performance tracing.
+2. Technical Stack
+Language: Python 3.x
 
-Resilience: Errors (e.g., tool execution failures) are captured and fed back to the agent as Observations, allowing the model to self-correct its strategy.
+Core Library: openai (for LLM interaction)
 
-2. Evaluation Harness
-I developed an evaluation script (evaluator.py) to test the agent against predefined prompts.
+Environment Management: python-dotenv (for secure credential handling)
 
-The harness verifies the agent's ability to fetch external information, manage multi-step reasoning, and adhere to the "Final Answer" output format.
+Dependencies: Defined in requirements.txt
 
-3. Quick Start
-Install dependencies:
+3. How It Works
+The agent utilizes a stateful loop that processes tasks in three distinct phases:
+
+Thought: The LLM analyzes the current goal and determines the next step.
+
+Action: The agent calls a tool (e.g., search_web, read_file) based on its thought process.
+
+Observation: The tool output is fed back into the conversation history, allowing the agent to adapt its strategy if errors occur.
+
+4. Evaluation Harness
+I implemented an evaluation script (evaluator.py) to validate agent performance. It tests the agent against a set of predefined prompts, measuring its ability to:
+
+Successfully call tools to retrieve data.
+
+Adhere to the Final Answer format.
+
+Handle multi-step reasoning without exceeding the loop limit (5 steps).
+
+5. Setup & Execution
+Prerequisites
+Ensure you have Python installed, then install the required dependencies:
 
 Bash
 pip install -r requirements.txt
-Configure Environment:
-Create a .env file in the root directory and add your API key:
+Configuration
+Create a file named .env in the root directory.
+
+Add your API key:
 
 Code snippet
 OPENAI_API_KEY=your_openai_api_key_here
-Run Tests:
+Running the Agent
+To run the full evaluation suite:
 
 Bash
 python evaluator.py
-4. Engineering Trade-offs
-Why CLI? I chose a command-line interface over a web UI to prioritize the "backend" logic. This keeps the focus on the reasoning loop and ensures clean, sequential logs for better observability.
+To run a single task:
 
-Why no frameworks? Avoiding libraries like LangChain or LangGraph allows for absolute transparency in how the agent handles context and state. It demonstrates a foundational understanding of the ReAct pattern.
+Bash
+python run.py
+6. Engineering Decisions & Trade-offs
+Custom Harness vs. Frameworks: By building the loop manually, I maintained full control over the agent's context window and state management, providing better transparency into the agent's decision-making process.
 
-5. Future Improvements
-Memory: Implement a local vector store (e.g., ChromaDB) for persistent context across long-running tasks.
+CLI Interaction: A command-line interface was chosen to provide real-time, sequential tracing of the agent's "Thought," "Action," and "Observation" cycles.
 
-Logging: Move from terminal print statements to structured JSON logging for better integration with external monitoring dashboards.
+Time Allocation:
 
-Submission Checklist
-[x] Source Code: Clear structure and documentation.
+Architecture & Loop Logic: 2 hours
 
-[x] Evaluation Harness: evaluator.py is ready to run.
+Tool Development & Prompting: 1.5 hours
 
-[x] README: This document covers design, trade-offs, and instructions.
+Evaluation Harness & Testing: 1 hour
 
-[x] Build Sessions: Ensure you have added the build_sessions/ folder with your raw logs.
+Documentation & Final Polish: 1 hour
 
-[x] Security: Ensure .env is listed in your .gitignore file to protect your API credentials.
+7. Deliverables Checklist
+[x] Source Code: Public Git repository structure.
+
+[x] README: This file.
+
+[x] Evaluation Harness: evaluator.py included.
+
+[x] Example Run: Demo included in run.py.
+
+[x] Build Session Logs: Provided in build_sessions/.
