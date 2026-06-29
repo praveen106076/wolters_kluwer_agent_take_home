@@ -24,13 +24,13 @@ I limited the loop to 5 steps to keep the agent from getting stuck in infinite l
 
 ## 3. Setup
 
-`pip install -r requirements.txt`
+1. `pip install -r requirements.txt`
 
-1. Create a `.env` file in the root directory with your OPENAI_API_KEY.
+2. Create a `.env` file in the root directory with your OPENAI_API_KEY.
 
-2. To run the tests: `python evaluator.py`
+3. To run the automated evaluation harness: `python Evaluator.py`
 
-3. To run a single task: `python run.py`
+4. To run a single demonstration task: `python run.py`
 
 ## 4. Deliverables Checklist
 
