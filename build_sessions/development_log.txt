@@ -1,0 +1,141 @@
+Development Session Log: AI Agent Take-Home Assessment
+Date: June 2026
+Participants: Praveenkumar Narayanan (User), Gemini (AI Collaborator)
+
+Session 1: Architectural Design
+
+User requested a solution for an AI Agent take-home challenge.
+
+Requirements: No frameworks (LangChain/LangGraph), ReAct loop (plan-act-observe), observability, evaluation harness.
+
+AI suggested a modular structure: main.py (loop), tools.py, prompts.py, evaluator.py.
+
+Decisions: Use a CLI interaction model for better observability into the "thought" process.
+
+Session 2: Implementation & Troubleshooting
+
+Implementation of main.py loop using openai SDK.
+
+Error Encountered: ModuleNotFoundError due to file placement/naming.
+
+Resolution: Verified directory structure and imports.
+
+Error Encountered: openai.OpenAIError: Missing credentials (API key not found).
+
+Resolution: Added python-dotenv and load_dotenv() to main.py.
+
+Session 3: Polish & Evaluation Harness
+
+Refinement of evaluator.py to include pass/fail metrics.
+
+Added robust error handling in main.py to prevent agent crashes during tool execution.
+
+Finalized project structure and documentation.
+
+
+(.venv) PS C:\Users\prave\PycharmProjects\wolters_kluwer_agent_take_home> python run.py
+
+Traceback (most recent call last):
+
+  File "C:\Users\prave\PycharmProjects\wolters_kluwer_agent_take_home\run.py", line 2, in <module>
+
+    from main import run_agent
+
+  File "C:\Users\prave\PycharmProjects\wolters_kluwer_agent_take_home\main.py", line 3, in <module>
+
+    from prompts import SYSTEM_PROMPT
+
+ModuleNotFoundError: No module named 'prompts'
+
+(.venv) PS C:\Users\prave\PycharmProjects\wolters_kluwer_agent_take_home>
+
+The error ModuleNotFoundError: No module named 'prompts' means that Python cannot find the prompts.py file in the directory where your main.py is looking.
+
+Here is how to fix this:
+
+1. Verify File Placement
+Ensure that prompts.py is in the exact same folder as main.py. Based on your path C:\Users\prave\PycharmProjects\wolters_kluwer_agent_take_home\, your directory should look like this:
+
+Plaintext
+wolters_kluwer_agent_take_home/
+├── .env
+├── main.py
+├── prompts.py    <-- Make sure this file exists here
+├── tools.py
+├── run.py
+└── requirements.txt
+2. Check for File Name Typos
+Ensure the file is named exactly prompts.py (all lowercase, no extra spaces). If you named it Prompts.py or prompts.py.txt, Python will not find it.
+
+3. Check for "Hidden" File Extensions
+On Windows, sometimes files are named prompts.py.txt without you realizing it.
+
+Open your folder in File Explorer.
+
+Go to the View tab.
+
+Check the box for File name extensions.
+
+If you see .txt at the end of prompts.py, rename it to remove the .txt.
+
+4. Fix a Potential Pathing Issue
+If you are using PyCharm, sometimes it runs scripts from a slightly different working directory. To fix this, ensure prompts.py is inside the same folder as main.py and try running it directly from the terminal again:
+
+Bash
+cd C:\Users\prave\PycharmProjects\wolters_kluwer_agent_take_home
+python run.py
+How to debug if it still fails:
+Add this line to the very top of your main.py to see where Python is looking for files:
+
+Python
+import sys
+print(sys.path)
+If the path C:\Users\prave\PycharmProjects\wolters_kluwer_agent_take_home is not in that list, you may need to right-click your wolters_kluwer_agent_take_home folder in PyCharm, select Mark Directory as, and choose Sources Root.
+
+Does this resolve the import error?
+
+File "C:\Users\prave\PycharmProjects\wolters_kluwer_agent_take_home\.venv\Lib\site-packages\openai\_client.py", line 230, in __init__
+
+    raise OpenAIError(
+
+openai.OpenAIError: Missing credentials. Please pass an `api_key`, `workload_identity`, `admin_api_key`, or set the `OPENAI_API_KEY` or `OPENAI_ADMIN_KEY` environment variable.
+
+(.venv) PS C:\Users\prave\PycharmProjects\wolters_kluwer_agent_take_home>
+
+The error openai.OpenAIError: Missing credentials means the openai library is not finding your API key. Even if your .env file exists, Python doesn't automatically "see" it unless you explicitly load it using the python-dotenv library.
+
+The Fix
+You need to add two lines to the very top of your main.py file to load your environment variables before the openai client is initialized.
+
+Update the top of your main.py like this:
+
+Python
+import os
+from dotenv import load_dotenv # Add this
+load_dotenv()                 # Add this to load variables from .env
+
+import openai
+# ... rest of your imports
+Why this happens
+Environment Variables: When you define OPENAI_API_KEY in a file named .env, it is just a text file. The computer's operating system does not automatically pull those values into your running Python process.
+
+load_dotenv(): This function reads the .env file and "injects" those key-value pairs into os.environ, which is what os.getenv("OPENAI_API_KEY") looks at.
+
+Troubleshooting Checklist
+If you still get the error after adding the lines above:
+
+Check pip: Ensure python-dotenv is actually installed in your current virtual environment:
+
+Bash
+pip install python-dotenv
+Case Sensitivity: Ensure your .env file is named exactly .env (it has no filename, only an extension). It should not be env.txt or .env.txt.
+
+Verification: You can add a quick debug print before the client initialization to see if Python sees the key:
+
+Python
+print(f"DEBUG: Key found: {bool(os.getenv('OPENAI_API_KEY'))}")
+client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+If it prints DEBUG: Key found: False, then the code is still not finding the .env file. Double-check that main.py and .env are in the exact same folder (wolters_kluwer_agent_take_home).
+
+Once load_dotenv() runs, os.getenv will successfully retrieve your key, and the agent should start.
+
