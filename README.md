@@ -28,3 +28,46 @@ I implemented an evaluation script (`evaluator.py`) to validate agent performanc
 Ensure you have Python installed, then install the required dependencies:
 ```bash
 pip install -r requirements.txt
+```
+
+### Configuration
+
+Create a file named .env in the root directory.
+
+Add your API key:
+
+Code snippet
+OPENAI_API_KEY=your_openai_api_key_here
+Running the Agent
+To run the full evaluation suite:
+
+Bash
+python evaluator.py
+To run a single task:
+
+Bash
+python run.py
+
+## 6. Engineering Decisions & Trade-offs
+Custom Harness vs. Frameworks: By building the loop manually, I maintained full control over the agent's context window and state management, providing better transparency.
+
+CLI Interaction: A command-line interface was chosen to provide real-time, sequential tracing of the agent's "Thought," "Action," and "Observation" cycles.
+
+Time Allocation: - Architecture & Loop Logic: 2 hours
+
+Tool Development & Prompting: 1.5 hours
+
+Evaluation Harness & Testing: 1 hour
+
+Documentation & Final Polish: 1 hour
+
+## 7. Deliverables Checklist
+**Source Code: Public Git repository structure.**
+
+**README: This file.**
+
+**Evaluation Harness: evaluator.py included.**
+
+**Example Run: Demo included in run.py.**
+
+**Build Session Logs: Provided in build_sessions/.**
